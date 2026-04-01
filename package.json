@@ -4,11 +4,15 @@
   "private": true,
   "description": "Machine-global skill marketplace for local agents",
   "type": "commonjs",
+  "bin": {
+    "skill-marketplace": "dist/cli.js"
+  },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "init:skills": "node dist/cli.js init",
     "list:skills": "node dist/cli.js list",
-    "resolve": "node dist/cli.js resolve"
+    "resolve": "node dist/cli.js resolve",
+    "install:global": "npm link"
   },
   "devDependencies": {
     "@types/node": "^22.10.1",

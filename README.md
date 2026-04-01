@@ -30,6 +30,20 @@ npm install
 npm run build
 ```
 
+Install CLI globally on this machine:
+
+```bash
+npm run install:global
+```
+
+Then run from anywhere:
+
+```bash
+skill-marketplace init
+skill-marketplace list --project C:/path/to/project
+skill-marketplace resolve --agent youtuber --task "high retention youtube script with audit"
+```
+
 ## Initialize global registry
 
 ```bash

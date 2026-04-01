@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import path from "path";
 import { getGlobalIndexPath, getGlobalRegistryDir, getProjectRegistryDir } from "./paths";
 import { initializeGlobalRegistry, loadMergedSkills } from "./registry";
