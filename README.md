@@ -43,6 +43,8 @@ skill-marketplace init
 skill-marketplace list --project C:/path/to/project
 skill-marketplace resolve --agent youtuber --task "high retention youtube script with audit"
 skill-marketplace runtime --agent youtuber --task "high retention youtube script with audit" --json
+skill-marketplace diary-set --key frontend.styling --value "no-inline-styles"
+skill-marketplace diary-list
 ```
 
 ## Initialize global registry
@@ -103,6 +105,47 @@ const { messages, resolve } = buildMessagesWithSkills({
 // pass `messages` to your LLM client
 // inspect `resolve.selected` for telemetry
 ```
+
+## Diary bridge across sessions
+
+Use `.diary/` to persist user preferences and runtime events so future sessions do not ask for the same defaults.
+
+Stored files:
+
+- `.diary/preferences.json` (normalized preference store)
+- `.diary/events.jsonl` (runtime resolve + preference update events)
+
+Commands:
+
+```bash
+skill-marketplace diary-set --category preferences --key frontend.framework --value react
+skill-marketplace diary-set --category preferences --key frontend.styling --value no-inline-styles
+skill-marketplace diary-set --category archetype --key working_mode --value brutal-enforcement
+skill-marketplace diary-list --json
+```
+
+Runtime behavior:
+
+- `runtime` auto-loads `.diary/preferences.json`
+- Auto-infers preference statements from user requests and persists them
+- Injects a concise `User Session Prep (Diary)` block into the system prompt
+- Appends resolve events to `.diary/events.jsonl` for continuous tuning
+
+Diary categories:
+
+- `personal-knowledge`
+- `professional-knowledge`
+- `hobbies`
+- `interests`
+- `preferences`
+- `archetype`
+
+Diary compactness rules:
+
+- Keep values normalized and short (`kebab-case`)
+- Prefer explicit user preferences over inferred ones
+- Inject only most recent/high-priority items (default max 12)
+- Enforce character budget (default max 600 chars)
 
 ## Skill format
 

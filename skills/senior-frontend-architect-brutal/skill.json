@@ -58,6 +58,13 @@
     "backend-only debugging",
     "marketing copy generation"
   ],
+  "guard_rails": [
+    "default_framework_react",
+    "no_inline_styles_without_explicit_exception",
+    "no_hardcoded_design_values",
+    "mandatory_refactor_on_token_or_boundary_violations",
+    "reject_vague_ui_requirements"
+  ],
   "historical_success": 0.88,
   "model_strategy": {
     "primary_model": "gpt-5.3-codex",

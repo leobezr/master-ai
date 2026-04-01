@@ -1,0 +1,11 @@
+{"type":"preference_set","key":"frontend.framework","value":"react","confidence":1,"source":"user_explicit","ts":"2026-04-01T02:16:07.778Z"}
+{"type":"preference_set","key":"frontend.styling","value":"no-inline-styles","confidence":1,"source":"user_explicit","ts":"2026-04-01T02:16:08.006Z"}
+{"type":"runtime_resolve","ts":"2026-04-01T02:16:08.491Z","agent":"senior_architect","task":"build settings UI","intent":"frontend_ui","selected_skill_ids":[]}
+{"type":"preference_set","key":"frontend.framework","value":"react","confidence":0.85,"source":"inferred","ts":"2026-04-01T02:17:52.636Z"}
+{"type":"preference_set","key":"frontend.styling","value":"no-inline-styles","confidence":0.85,"source":"inferred","ts":"2026-04-01T02:17:52.646Z"}
+{"type":"preference_set","key":"frontend.css_convention","value":"bem","confidence":0.85,"source":"inferred","ts":"2026-04-01T02:17:52.655Z"}
+{"type":"runtime_resolve","ts":"2026-04-01T02:17:52.674Z","agent":"senior_architect","task":"For frontend always use React and no inline styles, use BEM and keep answers concise","intent":"frontend_ui","selected_skill_ids":["senior-frontend-architect-brutal"]}
+{"type":"preference_set","category":"archetype","key":"working_mode","value":"brutal-enforcement","confidence":1,"source":"user_explicit","ts":"2026-04-01T02:19:36.117Z"}
+{"type":"preference_set","category":"professional-knowledge","key":"stack","value":"react-typescript","confidence":1,"source":"user_explicit","ts":"2026-04-01T02:19:36.355Z"}
+{"type":"preference_set","category":"interests","key":"topic","value":"developer-productivity","confidence":1,"source":"user_explicit","ts":"2026-04-01T02:19:36.561Z"}
+{"type":"runtime_resolve","ts":"2026-04-01T02:19:36.969Z","agent":"senior_architect","task":"help with frontend architecture","intent":"frontend_ui","selected_skill_ids":[]}

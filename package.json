@@ -13,6 +13,8 @@
     "list:skills": "node dist/cli.js list",
     "resolve": "node dist/cli.js resolve",
     "runtime": "node dist/cli.js runtime",
+    "diary:set": "node dist/cli.js diary-set",
+    "diary:list": "node dist/cli.js diary-list",
     "install:global": "npm link"
   },
   "devDependencies": {
