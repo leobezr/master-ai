@@ -1,5 +1,6 @@
 import os from "os";
 import path from "path";
+import crypto from "crypto";
 
 export function getMachineGlobalRoot(): string {
   return path.join(os.homedir(), ".agent-skills");
@@ -22,5 +23,7 @@ export function getProjectRegistryDir(projectRoot: string): string {
 }
 
 export function getProjectDiaryDir(projectRoot: string): string {
-  return path.join(projectRoot, ".diary");
+  const digest = crypto.createHash("sha1").update(projectRoot).digest("hex").slice(0, 12);
+  const projectName = path.basename(projectRoot).toLowerCase().replace(/[^a-z0-9-]/g, "-");
+  return path.join(getMachineGlobalRoot(), "diary", `${projectName}-${digest}`);
 }

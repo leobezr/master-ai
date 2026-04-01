@@ -108,12 +108,12 @@ const { messages, resolve } = buildMessagesWithSkills({
 
 ## Diary bridge across sessions
 
-Use `.diary/` to persist user preferences and runtime events so future sessions do not ask for the same defaults.
+Use a machine-local private diary to persist user preferences and runtime events so future sessions do not ask for the same defaults.
 
-Stored files:
+Stored files (NOT in repo):
 
-- `.diary/preferences.json` (normalized preference store)
-- `.diary/events.jsonl` (runtime resolve + preference update events)
+- `~/.agent-skills/diary/<project-hash>/preferences.json` (normalized preference store)
+- `~/.agent-skills/diary/<project-hash>/events.jsonl` (runtime resolve + preference update events)
 
 Commands:
 
@@ -126,10 +126,10 @@ skill-marketplace diary-list --json
 
 Runtime behavior:
 
-- `runtime` auto-loads `.diary/preferences.json`
+- `runtime` auto-loads machine-local diary for current project path
 - Auto-infers preference statements from user requests and persists them
 - Injects a concise `User Session Prep (Diary)` block into the system prompt
-- Appends resolve events to `.diary/events.jsonl` for continuous tuning
+- Appends resolve events to machine-local `events.jsonl` for continuous tuning
 
 Diary categories:
 
