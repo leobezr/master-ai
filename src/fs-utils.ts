@@ -12,6 +12,10 @@ export function writeText(filePath: string, value: string): void {
   fs.writeFileSync(filePath, value, "utf8");
 }
 
+export function appendText(filePath: string, value: string): void {
+  fs.appendFileSync(filePath, value, "utf8");
+}
+
 export function exists(filePath: string): boolean {
   return fs.existsSync(filePath);
 }

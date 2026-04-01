@@ -20,3 +20,7 @@ export function getProjectSkillsDir(projectRoot: string): string {
 export function getProjectRegistryDir(projectRoot: string): string {
   return path.join(getProjectSkillsDir(projectRoot), "registry");
 }
+
+export function getProjectDiaryDir(projectRoot: string): string {
+  return path.join(projectRoot, ".diary");
+}

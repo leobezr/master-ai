@@ -5,6 +5,7 @@ import { initializeGlobalRegistry, loadMergedSkills } from "./registry";
 import { resolveSkills } from "./resolver";
 import { AgentType } from "./types";
 import { resolveForRuntime } from "./runtime-hook";
+import { getPreferenceMap, loadDiary, setPreference } from "./diary";
 
 function getArg(flag: string): string | undefined {
   const idx = process.argv.indexOf(flag);
@@ -28,6 +29,8 @@ function printUsage(): void {
   console.log("  node dist/cli.js list [--project <path>]");
   console.log("  node dist/cli.js resolve --agent <senior_developer|senior_architect|youtuber> --task <text> [--project <path>] [--top-k 3] [--threshold 0.72] [--json]");
   console.log("  node dist/cli.js runtime --agent <senior_developer|senior_architect|youtuber> --task <text> [--project <path>] [--top-k 3] [--threshold 0.72] [--json]");
+  console.log("  node dist/cli.js diary-set --category <personal-knowledge|professional-knowledge|hobbies|interests|preferences|archetype> --key <name> --value <value> [--project <path>] [--confidence 1] [--source user_explicit|inferred]");
+  console.log("  node dist/cli.js diary-list [--project <path>] [--json]");
 }
 
 function runInit(): void {
@@ -167,6 +170,76 @@ function runRuntime(): void {
   console.log(runtime.injectedPrompt);
 }
 
+function runDiarySet(): void {
+  const key = getArg("--key");
+  const value = getArg("--value");
+  if (!key || !value) {
+    throw new Error("Missing required --key or --value argument");
+  }
+  const project = getArg("--project") ? path.resolve(getArg("--project") as string) : process.cwd();
+  const confidenceRaw = getArg("--confidence");
+  const sourceRaw = getArg("--source");
+  const categoryRaw = getArg("--category");
+  const confidence = confidenceRaw ? Number(confidenceRaw) : 1;
+  const source = sourceRaw === "inferred" ? "inferred" : "user_explicit";
+  const validCategories = [
+    "personal-knowledge",
+    "professional-knowledge",
+    "hobbies",
+    "interests",
+    "preferences",
+    "archetype"
+  ];
+  const category = validCategories.includes(String(categoryRaw))
+    ? (categoryRaw as
+        | "personal-knowledge"
+        | "professional-knowledge"
+        | "hobbies"
+        | "interests"
+        | "preferences"
+        | "archetype")
+    : "preferences";
+
+  const store = setPreference({
+    projectRoot: project,
+    category,
+    key,
+    value,
+    confidence,
+    source
+  });
+
+  if (process.argv.includes("--json")) {
+    console.log(JSON.stringify(store, null, 2));
+    return;
+  }
+
+  console.log(`Saved preference: ${key}=${value}`);
+}
+
+function runDiaryList(): void {
+  const project = getArg("--project") ? path.resolve(getArg("--project") as string) : process.cwd();
+  const asJson = process.argv.includes("--json");
+  const store = loadDiary(project);
+
+  if (asJson) {
+    console.log(JSON.stringify(store, null, 2));
+    return;
+  }
+
+  const map = getPreferenceMap(project);
+  const keys = Object.keys(map);
+  if (keys.length === 0) {
+    console.log("No diary preferences found.");
+    return;
+  }
+
+  console.log("Diary preferences:");
+  for (const key of keys) {
+    console.log(`- ${key}: ${map[key]}`);
+  }
+}
+
 function main(): void {
   const command = process.argv[2];
 
@@ -183,6 +256,12 @@ function main(): void {
         break;
       case "runtime":
         runRuntime();
+        break;
+      case "diary-set":
+        runDiarySet();
+        break;
+      case "diary-list":
+        runDiaryList();
         break;
       default:
         printUsage();

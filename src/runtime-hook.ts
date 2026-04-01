@@ -1,6 +1,7 @@
 import { loadMergedSkills } from "./registry";
 import { resolveSkills } from "./resolver";
 import { AgentType, RuntimeResolveResult, SelectedSkill } from "./types";
+import { appendEvent, buildDiaryPrompt, inferPreferencesFromRequest } from "./diary";
 
 export interface RuntimeResolveOptions {
   projectRoot?: string;
@@ -16,6 +17,8 @@ export function resolveForRuntime(input: {
   const projectRoot = input.options?.projectRoot ?? process.cwd();
   const topK = input.options?.topK ?? 3;
   const threshold = input.options?.threshold ?? 0.72;
+
+  inferPreferencesFromRequest(projectRoot, input.task);
 
   const allSkills = loadMergedSkills(projectRoot);
   const ranked = resolveSkills({
@@ -52,11 +55,24 @@ export function resolveForRuntime(input: {
     })
     .join("\n\n");
 
+  const preferenceBlock = buildDiaryPrompt(projectRoot, 12, 600);
+
+  const mergedInjectedPrompt = [injectedPrompt, preferenceBlock].filter((v) => v.trim().length > 0).join("\n\n");
+
+  appendEvent(projectRoot, {
+    type: "runtime_resolve",
+    ts: new Date().toISOString(),
+    agent: input.agent,
+    task: input.task,
+    intent: ranked.intent,
+    selected_skill_ids: selected.map((s) => s.manifest.skill_id)
+  });
+
   return {
     intent: ranked.intent,
     selected,
     skipped: ranked.skipped,
-    injectedPrompt
+    injectedPrompt: mergedInjectedPrompt
   };
 }
 

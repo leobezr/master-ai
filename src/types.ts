@@ -18,6 +18,7 @@ export interface SkillManifest {
   when_to_use: string;
   required_context: string[];
   disallowed_context: string[];
+  guard_rails?: string[];
   historical_success: number;
   model_strategy?: ModelStrategy;
 }
@@ -44,4 +45,25 @@ export interface RuntimeResolveResult {
   selected: SelectedSkill[];
   skipped: RankedSkill[];
   injectedPrompt: string;
+}
+
+export interface DiaryPreference {
+  key: string;
+  value: string;
+  confidence: number;
+  source: "user_explicit" | "inferred";
+  updated_at: string;
+}
+
+export type DiaryCategory =
+  | "personal-knowledge"
+  | "professional-knowledge"
+  | "hobbies"
+  | "interests"
+  | "preferences"
+  | "archetype";
+
+export interface DiaryStore {
+  version: number;
+  categories: Record<DiaryCategory, DiaryPreference[]>;
 }
