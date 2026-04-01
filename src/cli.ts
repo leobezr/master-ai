@@ -31,6 +31,7 @@ function printUsage(): void {
   console.log("  node dist/cli.js runtime --agent <senior_developer|senior_architect|youtuber> --task <text> [--project <path>] [--top-k 3] [--threshold 0.72] [--json]");
   console.log("  node dist/cli.js diary-set --category <personal-knowledge|professional-knowledge|hobbies|interests|preferences|archetype> --key <name> --value <value> [--project <path>] [--confidence 1] [--source user_explicit|inferred]");
   console.log("  node dist/cli.js diary-list [--project <path>] [--json]");
+  console.log("  node dist/cli.js doctor [--project <path>] [--json]");
 }
 
 function runInit(): void {
@@ -240,6 +241,84 @@ function runDiaryList(): void {
   }
 }
 
+function runDoctor(): void {
+  const project = getArg("--project") ? path.resolve(getArg("--project") as string) : process.cwd();
+  const asJson = process.argv.includes("--json");
+
+  const checks: Array<{ name: string; pass: boolean; details: string }> = [];
+  const merged = loadMergedSkills(project);
+  checks.push({
+    name: "skills_registered",
+    pass: merged.length > 0,
+    details: `count=${merged.length}`
+  });
+
+  const required = [
+    "senior-frontend-architect-brutal",
+    "senior-software-architect-brutal",
+    "youtuber-story-architect-brutal"
+  ];
+  for (const skillId of required) {
+    checks.push({
+      name: `has_${skillId}`,
+      pass: merged.some((s) => s.manifest.skill_id === skillId),
+      details: skillId
+    });
+  }
+
+  const runtime = resolveForRuntime({
+    agent: "senior_architect",
+    task: "React frontend architecture with design tokens, no inline styles, and BEM",
+    options: { projectRoot: project }
+  });
+  checks.push({
+    name: "frontend_skill_selected",
+    pass: runtime.selected.some((s) => s.manifest.skill_id === "senior-frontend-architect-brutal"),
+    details: runtime.selected.map((s) => s.manifest.skill_id).join(",") || "none"
+  });
+
+  checks.push({
+    name: "diary_injected",
+    pass: runtime.injectedPrompt.includes("User Session Prep (Diary)"),
+    details: runtime.injectedPrompt.length > 0 ? "present" : "empty"
+  });
+
+  const diary = loadDiary(project);
+  checks.push({
+    name: "diary_categories_present",
+    pass:
+      Boolean(diary.categories["personal-knowledge"]) &&
+      Boolean(diary.categories["professional-knowledge"]) &&
+      Boolean(diary.categories.hobbies) &&
+      Boolean(diary.categories.interests) &&
+      Boolean(diary.categories.preferences) &&
+      Boolean(diary.categories.archetype),
+    details: "all expected category buckets"
+  });
+
+  const ok = checks.every((c) => c.pass);
+
+  if (asJson) {
+    console.log(
+      JSON.stringify(
+        {
+          ok,
+          project,
+          checks
+        },
+        null,
+        2
+      )
+    );
+    return;
+  }
+
+  console.log(`doctor=${ok ? "pass" : "fail"}`);
+  for (const check of checks) {
+    console.log(`${check.pass ? "PASS" : "FAIL"} ${check.name} (${check.details})`);
+  }
+}
+
 function main(): void {
   const command = process.argv[2];
 
@@ -262,6 +341,9 @@ function main(): void {
         break;
       case "diary-list":
         runDiaryList();
+        break;
+      case "doctor":
+        runDoctor();
         break;
       default:
         printUsage();

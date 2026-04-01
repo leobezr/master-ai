@@ -15,6 +15,7 @@
     "runtime": "node dist/cli.js runtime",
     "diary:set": "node dist/cli.js diary-set",
     "diary:list": "node dist/cli.js diary-list",
+    "doctor": "node dist/cli.js doctor",
     "install:global": "npm link"
   },
   "devDependencies": {

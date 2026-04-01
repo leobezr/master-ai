@@ -23,27 +23,75 @@ Resolution order:
 2. Machine-global skill: `~/.agent-skills/registry/<skill-id>`
 3. Built-in fallback in your runtime (outside this package)
 
-## Install
+## Agent Install (Required)
+
+If you are an agent runtime/orchestrator, follow this exact setup once per machine.
+
+1) Install dependencies and build:
 
 ```bash
 npm install
 npm run build
 ```
 
-Install CLI globally on this machine:
+2) Install the CLI globally so any project/session can call it:
 
 ```bash
 npm run install:global
 ```
 
-Then run from anywhere:
+3) Seed machine-global skills registry:
 
 ```bash
 skill-marketplace init
+```
+
+4) Verify installation and routing health:
+
+```bash
+skill-marketplace doctor --project C:/path/to/project --json
+```
+
+If `ok=true`, the agent can start runtime integration.
+
+## Agent Runtime Contract
+
+On every user request, your agent should do this before model invocation:
+
+1) Determine active agent persona (`senior_developer` | `senior_architect` | `youtuber`)
+2) Call runtime resolver
+3) Inject returned `injectedPrompt` into system prompt
+4) Send final messages to model
+
+CLI equivalent:
+
+```bash
+skill-marketplace runtime --agent senior_architect --task "<user request>" --project C:/path/to/project --json
+```
+
+Programmatic integration:
+
+```ts
+import { buildMessagesWithSkills } from "agent-skill-marketplace-local/dist/runtime-hook";
+
+const { messages, resolve } = buildMessagesWithSkills({
+  agent: "senior_architect",
+  userPrompt: userText,
+  baseSystemPrompt: systemText,
+  options: { projectRoot: process.cwd(), topK: 3, threshold: 0.72 }
+});
+
+// send messages to model
+// optionally log resolve.selected
+```
+
+## Quick CLI Usage
+
+```bash
 skill-marketplace list --project C:/path/to/project
-skill-marketplace resolve --agent youtuber --task "high retention youtube script with audit"
+skill-marketplace resolve --agent youtuber --task "high retention youtube script with audit" --json
 skill-marketplace runtime --agent youtuber --task "high retention youtube script with audit" --json
-skill-marketplace diary-set --key frontend.styling --value "no-inline-styles"
+skill-marketplace diary-set --category preferences --key frontend.styling --value no-inline-styles
 skill-marketplace diary-list
 ```
 
@@ -82,7 +130,7 @@ Example:
 npm run resolve -- --agent youtuber --task "make a hook and title for a short about local ai agents" --top-k 2 --threshold 0.6
 ```
 
-## Runtime auto-injection
+## Runtime Auto-Injection
 
 Use the runtime command for machine-consumable selected skills and injected prompt:
 
@@ -106,7 +154,7 @@ const { messages, resolve } = buildMessagesWithSkills({
 // inspect `resolve.selected` for telemetry
 ```
 
-## Diary bridge across sessions
+## Diary Bridge Across Sessions
 
 Use a machine-local private diary to persist user preferences and runtime events so future sessions do not ask for the same defaults.
 
@@ -122,6 +170,7 @@ skill-marketplace diary-set --category preferences --key frontend.framework --va
 skill-marketplace diary-set --category preferences --key frontend.styling --value no-inline-styles
 skill-marketplace diary-set --category archetype --key working_mode --value brutal-enforcement
 skill-marketplace diary-list --json
+skill-marketplace doctor --project C:/path/to/project
 ```
 
 Runtime behavior:
@@ -130,6 +179,12 @@ Runtime behavior:
 - Auto-infers preference statements from user requests and persists them
 - Injects a concise `User Session Prep (Diary)` block into the system prompt
 - Appends resolve events to machine-local `events.jsonl` for continuous tuning
+
+Agent expectation:
+
+- Treat diary as persistent session memory.
+- Do not ask for the same stable preferences repeatedly.
+- Always include the concise diary prep block from runtime output.
 
 Diary categories:
 
