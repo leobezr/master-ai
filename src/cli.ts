@@ -4,6 +4,7 @@ import { getGlobalIndexPath, getGlobalRegistryDir, getProjectRegistryDir } from 
 import { initializeGlobalRegistry, loadMergedSkills } from "./registry";
 import { resolveSkills } from "./resolver";
 import { AgentType } from "./types";
+import { resolveForRuntime } from "./runtime-hook";
 
 function getArg(flag: string): string | undefined {
   const idx = process.argv.indexOf(flag);
@@ -25,7 +26,8 @@ function printUsage(): void {
   console.log("Usage:");
   console.log("  node dist/cli.js init");
   console.log("  node dist/cli.js list [--project <path>]");
-  console.log("  node dist/cli.js resolve --agent <senior_developer|senior_architect|youtuber> --task <text> [--project <path>] [--top-k 3] [--threshold 0.72]");
+  console.log("  node dist/cli.js resolve --agent <senior_developer|senior_architect|youtuber> --task <text> [--project <path>] [--top-k 3] [--threshold 0.72] [--json]");
+  console.log("  node dist/cli.js runtime --agent <senior_developer|senior_architect|youtuber> --task <text> [--project <path>] [--top-k 3] [--threshold 0.72] [--json]");
 }
 
 function runInit(): void {
@@ -68,6 +70,23 @@ function runResolve(): void {
     confidenceThreshold: threshold
   });
 
+  const asJson = process.argv.includes("--json");
+  if (asJson) {
+    console.log(
+      JSON.stringify(
+        {
+          agent,
+          intent: result.intent,
+          selected: result.selected,
+          skipped: result.skipped
+        },
+        null,
+        2
+      )
+    );
+    return;
+  }
+
   console.log(`agent=${agent}`);
   console.log(`intent=${result.intent}`);
   if (result.selected.length === 0) {
@@ -93,6 +112,61 @@ function runResolve(): void {
   }
 }
 
+function runRuntime(): void {
+  const task = getArg("--task");
+  if (!task) {
+    throw new Error("Missing required --task argument");
+  }
+
+  const agent = parseAgent(getArg("--agent"));
+  const topKRaw = getArg("--top-k");
+  const thresholdRaw = getArg("--threshold");
+  const topK = topKRaw ? Number(topKRaw) : 3;
+  const threshold = thresholdRaw ? Number(thresholdRaw) : 0.72;
+  const project = getArg("--project") ? path.resolve(getArg("--project") as string) : process.cwd();
+  const asJson = process.argv.includes("--json");
+
+  const runtime = resolveForRuntime({
+    agent,
+    task,
+    options: {
+      projectRoot: project,
+      topK,
+      threshold
+    }
+  });
+
+  if (asJson) {
+    console.log(
+      JSON.stringify(
+        {
+          agent,
+          intent: runtime.intent,
+          selected: runtime.selected,
+          injectedPrompt: runtime.injectedPrompt
+        },
+        null,
+        2
+      )
+    );
+    return;
+  }
+
+  console.log(`agent=${agent}`);
+  console.log(`intent=${runtime.intent}`);
+  if (runtime.selected.length === 0) {
+    console.log("No skills selected above threshold. Falling back to default behavior.");
+    return;
+  }
+
+  console.log("Selected skills:");
+  for (const skill of runtime.selected) {
+    console.log(`- ${skill.manifest.skill_id} (${skill.source}) score=${skill.score.toFixed(4)}`);
+  }
+  console.log("Injected prompt:");
+  console.log(runtime.injectedPrompt);
+}
+
 function main(): void {
   const command = process.argv[2];
 
@@ -106,6 +180,9 @@ function main(): void {
         break;
       case "resolve":
         runResolve();
+        break;
+      case "runtime":
+        runRuntime();
         break;
       default:
         printUsage();

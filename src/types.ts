@@ -28,8 +28,20 @@ export interface RankedSkill {
   reasons: string[];
 }
 
+export interface SelectedSkill extends RankedSkill {
+  prompt: string;
+  source: "project" | "global";
+}
+
 export interface ResolveResult {
   selected: RankedSkill[];
   skipped: RankedSkill[];
   intent: string;
+}
+
+export interface RuntimeResolveResult {
+  intent: string;
+  selected: SelectedSkill[];
+  skipped: RankedSkill[];
+  injectedPrompt: string;
 }

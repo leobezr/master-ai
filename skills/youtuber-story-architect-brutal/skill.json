@@ -6,6 +6,7 @@
   "agent_affinity": ["youtuber"],
   "capabilities": [
     "intent-clarification",
+    "structured-intake-validation",
     "audience-targeting",
     "belief-challenge-design",
     "emotional-targeting",
@@ -17,6 +18,8 @@
     "conflict-framing",
     "open-loop-design",
     "pattern-interruption",
+    "relatability-design",
+    "stakes-escalation",
     "retention-optimization",
     "narrative-structure-validation",
     "pacing-analysis",
@@ -24,6 +27,7 @@
     "emotional-curve-auditing",
     "quality-gating",
     "iterative-rewrite",
+    "failure-mode-recovery",
     "anti-pattern-rejection",
     "single-topic-enforcement",
     "story-payoff-enforcement",
@@ -51,6 +55,13 @@
     "youtube long form",
     "strong opening",
     "emotional arc",
+    "engagement drops",
+    "ruthless audit",
+    "narrative skeleton",
+    "vague input",
+    "weak hook",
+    "flat story",
+    "passive tone",
     "conflict",
     "payoff"
   ],
@@ -67,15 +78,15 @@
   "disallowed_context": ["quick generic copy", "non-video technical debugging"],
   "historical_success": 0.86,
   "model_strategy": {
-    "primary_model": "gpt-5.4",
+    "primary_model": "gpt-5.3",
     "secondary_model": "gpt-5-mini",
     "phase_model_overrides": {
       "hook_batch_generation": "gpt-5-mini",
-      "interrogation": "gpt-5.4",
-      "hook_scoring": "gpt-5.4",
-      "structure_validation": "gpt-5.4",
-      "script_generation": "gpt-5.4",
-      "ruthless_audit": "gpt-5.4"
+      "interrogation": "gpt-5.3",
+      "hook_scoring": "gpt-5.3",
+      "structure_validation": "gpt-5.3",
+      "script_generation": "gpt-5.3",
+      "ruthless_audit": "gpt-5.3"
     },
     "switch_policy": "Use secondary model for cheap broad exploration in hook generation, then promote candidates to primary model for scoring, rejection, refinement, final script, and audit."
   }

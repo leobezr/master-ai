@@ -42,6 +42,7 @@ Then run from anywhere:
 skill-marketplace init
 skill-marketplace list --project C:/path/to/project
 skill-marketplace resolve --agent youtuber --task "high retention youtube script with audit"
+skill-marketplace runtime --agent youtuber --task "high retention youtube script with audit" --json
 ```
 
 ## Initialize global registry
@@ -71,11 +72,36 @@ Optional flags:
 - `--project <path>`
 - `--top-k <number>`
 - `--threshold <0..1>`
+- `--json`
 
 Example:
 
 ```bash
 npm run resolve -- --agent youtuber --task "make a hook and title for a short about local ai agents" --top-k 2 --threshold 0.6
+```
+
+## Runtime auto-injection
+
+Use the runtime command for machine-consumable selected skills and injected prompt:
+
+```bash
+skill-marketplace runtime --agent youtuber --task "write a high retention script" --json
+```
+
+Programmatic hook for any project:
+
+```ts
+import { buildMessagesWithSkills } from "agent-skill-marketplace-local/dist/runtime-hook";
+
+const { messages, resolve } = buildMessagesWithSkills({
+  agent: "youtuber",
+  userPrompt: "write a high-retention youtube script with strong hook",
+  baseSystemPrompt: "You are a helpful assistant.",
+  options: { projectRoot: process.cwd(), threshold: 0.72, topK: 2 }
+});
+
+// pass `messages` to your LLM client
+// inspect `resolve.selected` for telemetry
 ```
 
 ## Skill format

@@ -12,6 +12,7 @@
     "init:skills": "node dist/cli.js init",
     "list:skills": "node dist/cli.js list",
     "resolve": "node dist/cli.js resolve",
+    "runtime": "node dist/cli.js runtime",
     "install:global": "npm link"
   },
   "devDependencies": {
