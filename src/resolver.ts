@@ -19,13 +19,23 @@ function intentScore(intent: string, skillId: string): number {
   if (intent === "content_video" && skillId.includes("youtuber")) {
     return 1;
   }
-  if (intent === "architecture" && skillId.includes("plan-eng-review")) {
+  if (intent === "architecture" && (skillId.includes("plan-eng-review") || skillId.includes("architect"))) {
     return 1;
   }
   if (intent === "debugging" && skillId.includes("investigate")) {
     return 1;
   }
   return 0.35;
+}
+
+function baseBoostForSkill(skillId: string): number {
+  if (skillId === "youtuber-story-architect-brutal") {
+    return 0.2;
+  }
+  if (skillId === "senior-software-architect-brutal") {
+    return 0.2;
+  }
+  return 0;
 }
 
 function triggerScore(task: string, patterns: string[]): number {
@@ -63,12 +73,14 @@ export function resolveSkills(input: {
       const iScore = intentScore(intent, s.manifest.skill_id);
       const tScore = triggerScore(input.task, s.manifest.trigger_patterns);
       const hScore = s.manifest.historical_success;
-      const total = iScore * 0.5 + tScore * 0.3 + hScore * 0.2;
+      const pScore = s.manifest.priority_weight ?? baseBoostForSkill(s.manifest.skill_id);
+      const total = iScore * 0.45 + tScore * 0.3 + hScore * 0.2 + pScore * 0.05;
 
       const reasons: string[] = [];
       reasons.push(`intent=${iScore.toFixed(2)}`);
       reasons.push(`trigger=${tScore.toFixed(2)}`);
       reasons.push(`history=${hScore.toFixed(2)}`);
+      reasons.push(`priority=${pScore.toFixed(2)}`);
 
       return {
         manifest: s.manifest,

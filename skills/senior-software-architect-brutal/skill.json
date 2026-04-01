@@ -1,0 +1,76 @@
+{
+  "skill_id": "senior-software-architect-brutal",
+  "version": "1.0.0",
+  "title": "Senior Software Architect (Brutal Mode)",
+  "description": "Strict architecture and code-quality enforcement with mandatory interrogation, interface-first design, and ruthless audit gates.",
+  "agent_affinity": ["senior_architect"],
+  "capabilities": [
+    "requirement-interrogation",
+    "scope-constraint-definition",
+    "clean-architecture-design",
+    "module-boundary-design",
+    "interface-first-design",
+    "dependency-inversion-enforcement",
+    "solid-enforcement",
+    "dry-enforcement",
+    "kiss-enforcement",
+    "yagni-enforcement",
+    "single-source-of-truth-enforcement",
+    "god-class-detection",
+    "circular-dependency-detection",
+    "hidden-side-effect-detection",
+    "complexity-auditing",
+    "mandatory-refactor-gating",
+    "technical-debt-reduction"
+  ],
+  "trigger_patterns": [
+    "clean architecture",
+    "software architecture",
+    "module boundaries",
+    "solid",
+    "dry",
+    "kiss",
+    "yagni",
+    "single source of truth",
+    "god class",
+    "god object",
+    "circular dependency",
+    "tight coupling",
+    "interface first",
+    "dependency inversion",
+    "mixed concerns",
+    "over engineering",
+    "premature abstraction",
+    "refactor required",
+    "architect review",
+    "code quality gate"
+  ],
+  "when_to_use": "Use when designing systems or reviewing codebases that need strict architectural constraints, low coupling, high cohesion, and mandatory quality gates.",
+  "required_context": [
+    "core responsibility",
+    "inputs and outputs",
+    "main entities",
+    "expected scale",
+    "what changes frequently",
+    "what must remain stable",
+    "out of scope"
+  ],
+  "disallowed_context": [
+    "quick cosmetic edits",
+    "pure marketing copy",
+    "non-technical ideation"
+  ],
+  "historical_success": 0.87,
+  "model_strategy": {
+    "primary_model": "gpt-5.3-codex",
+    "secondary_model": "gpt-5-mini",
+    "phase_model_overrides": {
+      "requirement_interrogation": "gpt-5.3-codex",
+      "architecture_design": "gpt-5.3-codex",
+      "interface_first_design": "gpt-5.3-codex",
+      "implementation_boilerplate": "gpt-5-mini",
+      "ruthless_audit": "gpt-5.3-codex"
+    },
+    "switch_policy": "Use primary model for architecture, validation, refactoring, and audits. Optionally use secondary model for repetitive boilerplate, then return to primary model for enforcement audit."
+  }
+}

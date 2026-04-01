@@ -2,9 +2,15 @@
   "skill_id": "plan-eng-review",
   "version": "1.0.0",
   "title": "Engineering Plan Review",
-  "description": "Architecture-focused planning and risk review.",
+  "description": "Architecture-focused plan review with practical tradeoff analysis.",
   "agent_affinity": ["senior_architect"],
-  "capabilities": ["architecture", "data-flow", "risk-assessment", "test-strategy"],
+  "capabilities": [
+    "architecture-review",
+    "data-flow-analysis",
+    "risk-assessment",
+    "test-strategy",
+    "operational-readiness"
+  ],
   "trigger_patterns": ["architecture", "design", "scaling", "data model", "plan", "tradeoff", "refactor", "refactoring"],
   "when_to_use": "Use before implementation to validate architecture and execution plans.",
   "required_context": ["requirements", "constraints"],
