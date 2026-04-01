@@ -6,6 +6,9 @@ function classifyIntent(task: string): string {
   if (/(youtube|video|thumbnail|hook|title|script|shorts)/.test(t)) {
     return "content_video";
   }
+  if (/(react|vue|frontend|ui|component|design system|token|bem|css|layout|prop drilling)/.test(t)) {
+    return "frontend_ui";
+  }
   if (/(architecture|system design|scaling|tradeoff|data model|api design)/.test(t)) {
     return "architecture";
   }
@@ -22,6 +25,9 @@ function intentScore(intent: string, skillId: string): number {
   if (intent === "architecture" && (skillId.includes("plan-eng-review") || skillId.includes("architect"))) {
     return 1;
   }
+  if (intent === "frontend_ui" && skillId.includes("frontend")) {
+    return 1;
+  }
   if (intent === "debugging" && skillId.includes("investigate")) {
     return 1;
   }
@@ -33,6 +39,9 @@ function baseBoostForSkill(skillId: string): number {
     return 0.2;
   }
   if (skillId === "senior-software-architect-brutal") {
+    return 0.2;
+  }
+  if (skillId === "senior-frontend-architect-brutal") {
     return 0.2;
   }
   return 0;
