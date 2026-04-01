@@ -1,0 +1,8 @@
+# Enforce ownership review on all changes.
+
+* @leobezr
+
+# Optional granular ownership
+/skills/ @leobezr
+/src/ @leobezr
+/README.md @leobezr
