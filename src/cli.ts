@@ -77,6 +77,18 @@ function runResolve(): void {
   console.log("Selected skills:");
   for (const skill of result.selected) {
     console.log(`- ${skill.manifest.skill_id} score=${skill.score.toFixed(4)} reasons=[${skill.reasons.join(", ")}]`);
+    if (skill.manifest.model_strategy) {
+      const strategy = skill.manifest.model_strategy;
+      console.log(
+        `  model_strategy primary=${strategy.primary_model} secondary=${strategy.secondary_model ?? "n/a"}`
+      );
+      if (strategy.phase_model_overrides) {
+        const phases = Object.entries(strategy.phase_model_overrides)
+          .map(([phase, model]) => `${phase}:${model}`)
+          .join(", ");
+        console.log(`  phase_overrides ${phases}`);
+      }
+    }
   }
 }
 

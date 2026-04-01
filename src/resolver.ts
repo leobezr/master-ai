@@ -35,11 +35,15 @@ function triggerScore(task: string, patterns: string[]): number {
   }
   let hits = 0;
   for (const p of patterns) {
-    if (t.includes(p.toLowerCase())) {
+    const pattern = p.toLowerCase().trim();
+    const tokens = pattern.split(/\s+/).filter(Boolean);
+    const phraseMatch = t.includes(pattern);
+    const tokenMatch = tokens.length > 1 && tokens.every((token) => t.includes(token));
+    if (phraseMatch || tokenMatch) {
       hits += 1;
     }
   }
-  return Math.min(1, hits / Math.max(3, patterns.length));
+  return Math.min(1, hits / 4);
 }
 
 export function resolveSkills(input: {

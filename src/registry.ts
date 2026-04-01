@@ -2,7 +2,6 @@ import fs from "fs";
 import path from "path";
 import { ensureDir, exists, readText, writeText } from "./fs-utils";
 import { getGlobalIndexPath, getGlobalRegistryDir, getProjectRegistryDir } from "./paths";
-import { seedSkills } from "./seed-skills";
 import { SkillManifest } from "./types";
 
 interface LoadedSkill {
@@ -23,11 +22,45 @@ function skillPromptPath(baseRegistryDir: string, skillId: string): string {
   return path.join(skillDir(baseRegistryDir, skillId), "prompt.md");
 }
 
+function getPackagedSkillsDir(): string {
+  return path.resolve(__dirname, "..", "skills");
+}
+
+function loadFromPackagedSkills(): LoadedSkill[] {
+  const packagedDir = getPackagedSkillsDir();
+  if (!exists(packagedDir)) {
+    return [];
+  }
+
+  const dirs = fs.readdirSync(packagedDir, { withFileTypes: true });
+  const skills: LoadedSkill[] = [];
+
+  for (const dirent of dirs) {
+    if (!dirent.isDirectory()) {
+      continue;
+    }
+    const skillId = dirent.name;
+    const manifestPath = path.join(packagedDir, skillId, "skill.json");
+    const promptPath = path.join(packagedDir, skillId, "prompt.md");
+    if (!exists(manifestPath) || !exists(promptPath)) {
+      continue;
+    }
+
+    const manifest = JSON.parse(readText(manifestPath)) as SkillManifest;
+    const prompt = readText(promptPath);
+    skills.push({ source: "global", manifest, prompt });
+  }
+
+  return skills;
+}
+
 export function initializeGlobalRegistry(): string {
   const registryDir = getGlobalRegistryDir();
   ensureDir(registryDir);
 
-  for (const skill of seedSkills) {
+  const packagedSkills = loadFromPackagedSkills();
+
+  for (const skill of packagedSkills) {
     const dir = skillDir(registryDir, skill.manifest.skill_id);
     ensureDir(dir);
     writeText(skillManifestPath(registryDir, skill.manifest.skill_id), JSON.stringify(skill.manifest, null, 2));
@@ -36,7 +69,7 @@ export function initializeGlobalRegistry(): string {
 
   const index = {
     version: 1,
-    skills: seedSkills.map((s) => s.manifest.skill_id)
+    skills: packagedSkills.map((s) => s.manifest.skill_id)
   };
   writeText(getGlobalIndexPath(), JSON.stringify(index, null, 2));
   return registryDir;

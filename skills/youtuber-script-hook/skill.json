@@ -1,0 +1,13 @@
+{
+  "skill_id": "youtuber-script-hook",
+  "version": "1.0.0",
+  "title": "YouTube Hook and Script Packager",
+  "description": "Generate hooks, titles, outline, and CTA for videos.",
+  "agent_affinity": ["youtuber"],
+  "capabilities": ["content-strategy", "hook-writing", "title-optimization", "audience-retention"],
+  "trigger_patterns": ["youtube", "video", "hook", "thumbnail", "title", "script", "shorts"],
+  "when_to_use": "Use for video ideation and script packaging for YouTube.",
+  "required_context": ["topic", "target audience"],
+  "disallowed_context": ["backend debugging", "database migration"],
+  "historical_success": 0.9
+}

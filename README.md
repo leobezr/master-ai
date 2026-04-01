@@ -1,11 +1,13 @@
 # Local Skill Marketplace (Machine-Global)
 
 This project sets up a machine-global skill marketplace so multiple projects can reuse the same agent skills.
+Packaged skills are decoupled into the repo `skills/` directory.
 
 ## What it does
 
 - Creates a machine-global registry at `~/.agent-skills/registry`
 - Seeds three starter skills
+- Seeds starter skills from `skills/*` (including Story Architect Brutal)
 - Supports three agents:
   - `senior_developer`
   - `senior_architect`
@@ -33,6 +35,8 @@ npm run build
 ```bash
 npm run init:skills
 ```
+
+This command copies skill manifests/prompts from `skills/` into `~/.agent-skills/registry`.
 
 ## List merged skills for a project
 
@@ -77,6 +81,21 @@ Manifest fields:
 - `required_context`
 - `disallowed_context`
 - `historical_success`
+- `model_strategy` (optional)
+
+`model_strategy` supports:
+
+- `primary_model`
+- `secondary_model`
+- `phase_model_overrides` (phase -> model)
+- `switch_policy`
+
+## Registered skills (default seed)
+
+- `investigate`
+- `plan-eng-review`
+- `youtuber-script-hook`
+- `youtuber-story-architect-brutal` (from `drafts/writer.md`, normalized into a trigger-driven usable skill)
 
 ## Next steps
 
