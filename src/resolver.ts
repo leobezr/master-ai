@@ -73,7 +73,7 @@ export function resolveSkills(input: {
       const iScore = intentScore(intent, s.manifest.skill_id);
       const tScore = triggerScore(input.task, s.manifest.trigger_patterns);
       const hScore = s.manifest.historical_success;
-      const pScore = s.manifest.priority_weight ?? baseBoostForSkill(s.manifest.skill_id);
+      const pScore = baseBoostForSkill(s.manifest.skill_id);
       const total = iScore * 0.45 + tScore * 0.3 + hScore * 0.2 + pScore * 0.05;
 
       const reasons: string[] = [];
